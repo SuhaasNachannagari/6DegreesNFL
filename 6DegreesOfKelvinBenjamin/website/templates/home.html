@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Find Player Connection{% endblock %}
+
+{% block content %}
+<div class="full_webpage">
+  <form method="post" class="mb-4">
+
+    <!-- centered row of two dropdowns -->
+    <div class="row justify-content-center g-3 mb-4">
+      <div class="col-md-5 col-lg-4 dropdown">
+        <label for="start_name" class="form-label">Player One</label>
+        <input
+          id="start_name"
+          class="form-control dropdown-toggle"
+          type="text"
+          placeholder="Type a name…"
+          autocomplete="off"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+        <ul class="dropdown-menu w-100" id="start_list"></ul>
+        <input type="hidden" name="start" id="start_code">
+      </div>
+
+      <div class="col-md-5 col-lg-4 dropdown">
+        <label for="target_name" class="form-label">Player Two</label>
+        <input
+          id="target_name"
+          class="form-control dropdown-toggle"
+          type="text"
+          placeholder="Type a name…"
+          autocomplete="off"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+        <ul class="dropdown-menu w-100" id="target_list"></ul>
+        <input type="hidden" name="target" id="target_code">
+      </div>
+    </div>
+
+    <!-- centered row for the button -->
+    <div class="row">
+      <div class="col-12 text-center">
+        <button type="submit" class="btn btn-primary btn-center">
+          Connect!
+        </button>
+        {% if not path %}
+        <div id="prompt-message" class="text-center text-muted mt-4 mb-3">
+            Please select two players since the 1970 NFL-AFL merger and click Connect!
+            </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </form>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  {% if path %}
+      <div class="connection-container">
+        {% for step in path %}
+          <div
+            class="connection-row fade-in"
+            style="animation-delay: {{ loop.index0 * 0.2 }}s;">
+            <div class="connection-card player-card">{{ step.p1 }}</div>
+            <div class="connection-card detail-card team-{{ step.code|lower }}">
+              <div class="fw-bold">{{ step.year }}</div>
+              <div>{{ step.team }}</div>
+            </div>
+            <div class="connection-card player-card">{{ step.p2 }}</div>
+          </div>
+        {% endfor %}
+      </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function wireAutocomplete(inputId, listId, codeId) {
+    const input  = document.getElementById(inputId);
+    const menu   = document.getElementById(listId);
+    const hidden = document.getElementById(codeId);
+    let map = {};
+
+    input.addEventListener("input", () => {
+      const q = input.value.trim();
+      if (q.length < 2) {
+        menu.innerHTML = "";
+        menu.classList.remove("show");
+        return;
+      }
+
+      fetch(`/autocomplete?q=${encodeURIComponent(q)}`)
+        .then(r => r.json())
+        .then(items => {
+          map = {};
+          menu.innerHTML = "";
+          items.forEach(item => {
+            map[item.label] = item.code;
+            const li = document.createElement("li");
+            const a  = document.createElement("a");
+            a.className = "dropdown-item";
+            a.href      = "#";
+            a.textContent = item.label;
+            a.addEventListener("click", e => {
+              e.preventDefault();
+              input.value  = item.label;
+              hidden.value = item.code;
+              menu.classList.remove("show");
+            });
+            li.appendChild(a);
+            menu.appendChild(li);
+          });
+
+          if (items.length) {
+            menu.classList.add("show");
+          } else {
+            menu.classList.remove("show");
+          }
+        });
+    });
+
+    input.addEventListener("blur", () => {
+      setTimeout(() => menu.classList.remove("show"), 200);
+    });
+  }
+
+  wireAutocomplete("start_name",  "start_list",  "start_code");
+  wireAutocomplete("target_name", "target_list", "target_code");
+</script>
+        <footer class="bg-dark text-white text-center py-3 mt-5">
+      <div class="container">
+        <a href="https://www.linkedin.com/in/suhaas-nachannagari-275092290/" class="text-white mx-2">LinkedIn</a> |
+        <a href="mailto:madhusuhaas@example.com" class="text-white mx-2">Email</a> |
+        <a href="https://github.com/SuhaasNachannagari" class="text-white mx-2">GitHub</a>
+      </div>
+    </footer>
+{% endblock %}
