@@ -5,9 +5,9 @@ A "Six Degrees of Kevin Bacon"–style web app that connects NFL players through
 ## Overview
 
 **6 Degrees of Kelvin Benjamin** is a graph-based exploration tool for NFL fans. It answers questions like:  
-> *"How is Tom Brady connected to Travis Hunter?"*  
+> *"How is Tom Brady connected to Travis Hunter?" or go a little further: "How is Saquon Barkley connected to Walter Payton*   
 
-By analyzing real NFL game data since 1999, the app constructs a massive player graph where edges connect players who appeared **in the same game** for **the same team**.
+By analyzing real NFL game data since 1966, the app constructs a massive player graph where edges connect players who appeared **in the same game** for **the same team**.
 
 ## Features
 
