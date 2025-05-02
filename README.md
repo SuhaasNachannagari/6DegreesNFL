@@ -10,9 +10,29 @@ The NFL is a highly interconnected ecosystem. Players move between teams, line u
 
 The user becomes more informed about the history of this beautiful game, and a fun mini-game lies where you can try to find players that are ATLEAST 5 degrees apart. Congratulations if you manage to get to 6, it's considered nearly impossible. And anything past that? Good luck.
 
-A key trait of this specific application is to visualize the implicit connections between players across generations and rosters using actual participation data — not just rosters or transactions. It made the process of consolidating everything that much harder, but it is the only way to account for trades and make the system wholly accurate - we do not want to say that 2 players traded for one another, however rare that may be in the NFL, shared the field together. However roster data per year would have it so both played on the Jaguars in 2023 for example, thus we need to take the extra, painful precaution of analyzing individual game logs and all participants.
+A key trait of this specific application is to visualize the implicit connections between players across generations and rosters using actual participation data — not just rosters or transactions. It made the process of consolidating everything that much harder, but it is the only way to account for trades and make the system wholly accurate - we do not want to say that 2 players traded for one another, however rare that may be in the NFL, shared the field together. However, roster data per year would have it so both played on the Jaguars in 2023 for example, thus we need to take the extra, painful precaution of analyzing individual game logs and all participants.
 
 ---
+
+## Challenges
+
+I want to talk about the challenges early because it really lays out how I thought this project through and highlights the multiple components that made life just a little bit harder everytime they were discovered.
+
+The project seems simple at first glance, go to pro-football reference, check rosters for each team in each year, check if two players are on a table, an then create an edge between them, with the nodes being the players. Do this 32 times, for a 100 years since the NFL's inception.
+
+As I did the preliminary analysis of the data-sets, here were the things I realized, every problem that required a solution, which I found! But now I need a solution for my GPA that I could've been working on instead. But yeah problems:
+
+- **Problem**: Teams often change names, with a lot of locations overlapping throughout the years. For example, Los Angeles has multiple teams, and the Steelers have played in both Houston and Tennessee.
+- **Solution**: PFR give's every team a unique ID, while rigorous and time consuming creating a dictionary that accounted for each team's code, and it's name/location in a given year in various places throughout this project helped us overcome this hurdle of identifying teams. Titans links ALWAYS had "oti", their unique code, on every link regarding them, whether it be schedule or game logs.
+
+- **Problem**: PFR's data's html is very poorly labeled and formatted. For example, when scraping the HTML, we can access the first table, which is "Passing, Receving, and Rushing" through it's id,  but there is not one table with all the players on both sides of the ball that played for the Titans for example. It would need to be data consolidated from 6 tables most of the time, but a problem within that is not all 6 tables always existed. all containing players that the other's might not have. But every table's implemntation and class_ids other than the first one ared **commented** in the page's html, meaning that beautifulsoup skips over it.
+- **Solution**: I created a helper function that parses the html comments as plain text, and then accesses the specific parts of the table as plain text and updates our JSON file accordingly. To consolidate the data, Ialso had to use regex as well as helper functions for each possible type of table because all of them had different conventions in the html, for example, offensive_snap_counts would be declared in a higher class than Kick and Punt Returns, although both occupy the page in identical manners. So yeah brute force it.
+
+- **Problem**: Player names on PFR are not unique — for example, "Chris Johnson" could refer to the Titans' 2,000-yard rusher or a fringe DB from the same decade. Additionally, the same player may appear in different formats across different tables (e.g., with suffixes, middle initials, or asterisks for Pro Bowl appearances). 
+- **Solution**: I standardized all player references using PFR’s unique player IDs (slugs like JohnCh01), not names. These IDs were extracted directly from the player profile URLs. We maintained a mapping between player names and these codes throughout graph construction, ensuring data consistency no matter how a player was listed on a given table. But this creates a problem when we have to return the player on the website's front page, so I webscraped the players-to-ids in players.json and used that when displaying names, even thoug the website is built off the id's.
+
+- **Problem:** BFS pathfinding is fast, but the graph contains thousands of nodes and hundreds of thousands of edges. Naively re-parsing the graph on every request would lead to unacceptable load times.
+- **Solution:** I serialized the entire graph using pickle after the build phase. This allowed us to load it once on server startup and perform all BFS queries in memory. Our Flask app simply loads player_graph.pkl on boot, ensuring instant access and a smooth frontend experience.
 
 ## Technical Overview
 
@@ -108,8 +128,11 @@ This type of query demonstrates how a recent player can be traced through multip
 - Show season/game metadata for each edge in the returned path. Not that important, more data might actually make the website more congested.
 - Add filters by position (e.g., WR-only paths), adding specificity so more relevant connections are made. As it stands a lot of players no one has heard about before will be used in the connections, especially kickers and punters.
 - Right now the website is hosted on a the free plan from PythonAnywhere, I will look into deployin the site publicly with persistent storage and a CI/CD pipeline to let more people use it. Within the websites's first week of existence it has already seen 2,000+ visits, will most likely need to make it more stable and accessible.
+- Attempt to get data from before the merger, and from teams that have since been dissolved. Would take a lot of different sources, but it would make this project even more fruitful.
 
 ---
+##
+
 
 ## License
 
