@@ -20,7 +20,7 @@ I want to talk about the challenges early because it really lays out how I thoug
 
 The project seems simple at first glance, go to pro-football reference, check rosters for each team in each year, check if two players are on a table, an then create an edge between them, with the nodes being the players. Do this 32 times, for a 100 years since the NFL's inception.
 
-As I did the preliminary analysis of the data-sets, here were the things I realized, every problem that required a solution, which I found! But now I need a solution for my GPA that I could've been working on instead. But yeah problems:
+As I did the preliminary analysis of the data-sets, here were the things I realized, every problem that required a solution, which I found evntually! But now I need a solution for my GPA that I could've been working on instead. But yeah here are the problems:
 
 - **Problem**: Teams often change names, with a lot of locations overlapping throughout the years. For example, Los Angeles has multiple teams, and the Steelers have played in both Houston and Tennessee.
 - **Solution**: PFR give's every team a unique ID, while rigorous and time consuming creating a dictionary that accounted for each team's code, and it's name/location in a given year in various places throughout this project helped us overcome this hurdle of identifying teams. Titans links ALWAYS had "oti", their unique code, on every link regarding them, whether it be schedule or game logs.
@@ -32,8 +32,7 @@ As I did the preliminary analysis of the data-sets, here were the things I reali
 
 - **Problem**: Player names on PFR are not unique — for example, "Chris Johnson" could refer to the Titans' 2,000-yard rusher or a fringe DB from the same decade. Additionally, the same player may appear in different formats across different tables (e.g., with suffixes, middle initials, or asterisks for Pro Bowl appearances). 
 - **Solution**: I standardized all player references using PFR’s unique player IDs (slugs like JohnCh01), not names. These IDs were extracted directly from the player profile URLs. We maintained a mapping between player names and these codes throughout graph construction, ensuring data consistency no matter how a player was listed on a given table. But this creates a problem when we have to return the player on the website's front page, so I webscraped the players-to-ids in players.json and used that when displaying names, even thoug the website is built off the id's.
-
-
+--
 - **Problem:** BFS pathfinding is fast, but the graph contains thousands of nodes and hundreds of thousands of edges. Naively re-parsing the graph on every request would lead to unacceptable load times.
 - **Solution:** I serialized the entire graph using pickle after the build phase. This allowed us to load it once on server startup and perform all BFS queries in memory. Our Flask app simply loads player_graph.pkl on boot, ensuring instant access and a smooth frontend experience.
 
