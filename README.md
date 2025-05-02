@@ -83,7 +83,7 @@ The system might return:
 <img width="506" alt="image" src="https://github.com/user-attachments/assets/584dfa26-d22d-4a23-a71b-346b898ff3c7" />
 
 
-This type of query demonstrates how a recent player can be traced through multiple generations of NFL stars.
+This type of query demonstrates how a recent player can be traced through multiple generations of NFL stars. It can get much longer than this, but those paths are for the users to find out :) Good luck getting to 6 or more connections.
 
 ---
 
