@@ -6,7 +6,9 @@
 
 ## Project Motivation
 
-The NFL is a highly interconnected ecosystem. Players move between teams, line up beside future Hall-of-Famers, and share the field with rising rookies. This project explores that network by asking: _“Can you trace a path between any two NFL players through shared team-game appearances?”_ The user becomes more informed about the history of this beautiful game, and a mini-game lies where you can try to find players that are ATLEAST 5 degrees apart. Congratulations if you manage to get to 6, it's considered nearly impossible. And anything past that? Good luck.
+The NFL is a highly interconnected ecosystem. Players move between teams, line up beside future Hall-of-Famers, and share the field with rising rookies. This project explores that network by asking: _“Can you trace a path between any two NFL players through shared team-game appearances?”_ 
+
+The user becomes more informed about the history of this beautiful game, and a fun mini-game lies where you can try to find players that are ATLEAST 5 degrees apart. Congratulations if you manage to get to 6, it's considered nearly impossible. And anything past that? Good luck.
 
 A key trait of this specific application is to visualize the implicit connections between players across generations and rosters using actual participation data — not just rosters or transactions. It made the process of consolidating everything that much harder, but it is the only way to account for trades and make the system wholly accurate - we do not want to say that 2 players traded for one another, however rare that may be in the NFL, shared the field together. However roster data per year would have it so both played on the Jaguars in 2023 for example, thus we need to take the extra, painful precaution of analyzing individual game logs and all participants.
 
@@ -23,6 +25,10 @@ A precomputed graph is serialized using `pickle`, and shortest paths are retriev
 
 
 ## Setup Instructions
+
+You can skip the setup if you want and just visit the website I deployed: https://suhaasnach.pythonanywhere.com/
+
+In the slim chance that this wonderful website crashes (due to attracting way more users than it can handle ofcourse, not the code itself), the following instructions should work:
 
 1. Clone the repository:
    ```bash
@@ -99,10 +105,9 @@ This type of query demonstrates how a recent player can be traced through multip
 ## Potential Enhancements
 
 - My top priority is creating a guessing game almost, where my data can be repurposed to allow the users to get from one random player to another random player in the fewest teammates possible. This should be easier because there's no pathfinding, it is just take input, check for gamelog with both players, verify, and repeat.
-- Show season/game metadata for each edge in the returned path.
-- Add filters by position (e.g., WR-only paths).
-- Support connections across different team stints (e.g., trade chains).
-- Deploy the site publicly with persistent storage and a CI/CD pipeline.
+- Show season/game metadata for each edge in the returned path. Not that important, more data might actually make the website more congested.
+- Add filters by position (e.g., WR-only paths), adding specificity so more relevant connections are made. As it stands a lot of players no one has heard about before will be used in the connections, especially kickers and punters.
+- Right now the website is hosted on a the free plan from PythonAnywhere, I will look into deployin the site publicly with persistent storage and a CI/CD pipeline to let more people use it. Within the websites's first week of existence it has already seen 2,000+ visits, will most likely need to make it more stable and accessible.
 
 ---
 
